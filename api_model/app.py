@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, File
 
 from inference import RoadDefectModel
-from utils import to_Image
+from utils import to_Image, sift_matching
 
 app = FastAPI()
 
@@ -48,6 +48,7 @@ async def detection(file: UploadFile = File(...), model_name: str = "None", dete
 
 
 @app.post("/compare")
-async def compare_img(json_data: str):
-    # TODO: Написать функцию сравнения двух изображений
+async def compare_img(file_first: UploadFile = File(...),file_second: UploadFile = File(...)):
+    # TODO: Дописать функцию сравнения двух изображений
+    sift_matching()
     return " "

@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 from api_model.inference import RoadDefectModel
 from api_model.model import Images
-from api_model.sensitive_data import list_coor, connection_string
+from data.sensitive_data import list_coor, connection_string
 import os
 
 from api_model.utils import load_Image

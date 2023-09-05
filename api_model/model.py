@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, JSON, DateTime, create_engine
 from sqlalchemy.orm import Session, sessionmaker, declarative_base
 import datetime
 
-from api_model.sensitive_data import connection_string
+from data.sensitive_data import connection_string
 
 Base = declarative_base()
 
