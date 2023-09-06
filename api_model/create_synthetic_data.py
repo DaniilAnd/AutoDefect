@@ -1,13 +1,15 @@
+import json
+
 import numpy as np
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from api_model.inference import RoadDefectModel
-from api_model.model import Images
-from data.sensitive_data import list_coor, connection_string
+from model import Images
+from sensitive_data import list_coor, connection_string
 import os
 
-from api_model.utils import load_Image
+from api_model.utils import load_Image, to_dict
 
 if __name__ == "__main__":
 
@@ -21,9 +23,12 @@ if __name__ == "__main__":
         img = load_Image(path_img)
         model = RoadDefectModel()
         result = model.get_predict(img, 0.1)
-        print(np.array(result.xyxy))
-        # new_image = Images(id_user=i, name_images=f'image{i}.jpg',
-        #                    bbox_json={'x': 10, 'y': 20, 'width': 100, 'height': 200},
-        #                    gps_coordinates={"x": data[0], "y": data[1]})
-        # session.add(new_image)
-        # session.commit()
+        bbox = np.array(result.xyxy)
+        dict_schema = to_dict(bbox)
+        json_schema = json.dumps(dict_schema)
+        print(dict_schema)
+        new_image = Images(id_user=1, name_images=f'{path_img}',
+                           bbox_json=json_schema,
+                           gps_coordinates={"x": coor[0], "y": coor[1]})
+        session.add(new_image)
+        session.commit()

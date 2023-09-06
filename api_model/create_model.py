@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from api_model.model import Images
-from data.sensitive_data import *
+from sensitive_data import *
 
 if __name__ == "__main__":
 

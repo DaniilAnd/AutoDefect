@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, JSON, DateTime, create_engine
 from sqlalchemy.orm import Session, sessionmaker, declarative_base
 import datetime
 
-from data.sensitive_data import connection_string
+# from data.sensitive_data import connection_string
 
 Base = declarative_base()
 
@@ -18,7 +18,7 @@ class Images(Base):
     gps_coordinates = Column(JSON)
 
 
-if __name__ == "__main__":
-    engine = create_engine(connection_string)
-    Base.metadata.create_all(engine)
+# if __name__ == "__main__":
+#     engine = create_engine(connection_string)
+#     Base.metadata.create_all(engine)
 
