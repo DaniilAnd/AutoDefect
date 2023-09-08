@@ -4,6 +4,7 @@ import cv2
 import kornia.feature as KF
 import numpy as np
 import torch
+import yaml
 from PIL import Image
 from kornia_moons.feature import *
 
@@ -27,7 +28,7 @@ def load_Image(path: str):
     return Image.open(path).convert('RGB')
 
 
-def sift_matching(fname1, fname2):
+def sift_matching(fname1, fname2) -> bool:
     """
 
     :param fname1:
@@ -57,20 +58,23 @@ def sift_matching(fname1, fname2):
     F, inliers_mask = cv2.findFundamentalMat(src_pts, dst_pts, cv2.USAC_MAGSAC, 0.25, 0.999, 100000)
 
     # Drawing matches using kornia_moons
-    draw_LAF_matches(
-        lafs1,
-        lafs2,
-        idxs,
-        img1,
-        img2,
-        inliers_mask,
-        draw_dict={"inlier_color": (0.2, 1, 0.2), "tentative_color": None, "feature_color": None, "vertical": False},
-    )
-    print(f"{inliers_mask.sum()} inliers found")
-    return
+    # draw_LAF_matches(
+    #     lafs1,
+    #     lafs2,
+    #     idxs,
+    #     img1,
+    #     img2,
+    #     inliers_mask,
+    #     draw_dict={"inlier_color": (0.2, 1, 0.2), "tentative_color": None, "feature_color": None, "vertical": False},
+    # )
+    # print(f"{inliers_mask.sum()} inliers found")
+    if inliers_mask.sum() > 2:
+        return True
+    else:
+        return False
 
 
-def to_dict(data):
+def to_dict(data) -> dict:
     """
 
     :param data:
@@ -86,3 +90,13 @@ def to_dict(data):
         "y2": float(bbox[3])
     }
     return dict_schema
+
+
+def load_yaml(filepath) -> object:
+    """
+
+    :param filepath: 
+    :return: 
+    """
+    with open(filepath, 'r') as f:
+        return yaml.safe_load(f)

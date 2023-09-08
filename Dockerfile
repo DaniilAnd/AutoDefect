@@ -10,6 +10,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 ARG PORT_ID=3000
 ARG HOST=0.0.0.0
+ARG APP_CONF_PATH=app/app_config.yaml
+
+ENV APP_CONF_PATH ${APP_CONF_PATH}
 ENV PORT_ID ${PORT_ID}
 ENV HOST ${HOST}
 
@@ -25,9 +28,11 @@ RUN python3.9 -m pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torch
 COPY ./api_model ./api_model
 COPY ./requirements.txt .
 RUN python3.9 -m pip install -r requirements.txt
-#RUN python3.9 -m pip install -e .
 
-WORKDIR ./api_models
+#WORKDIR ./api_models
 
 EXPOSE ${PORT_ID}
-CMD cd api_models  && python3.9 -m uvicorn app:app --host ${HOST} --workers 3 --port ${PORT_ID}
+CMD cd api_models  && python app/app.py \
+    --app_conf_path /app/${APP_CONF_PATH}\
+    --port ${PORT_ID} \
+    --host ${HOST}

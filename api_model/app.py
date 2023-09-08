@@ -1,45 +1,39 @@
 import json
+import shutil
 
+import click
 import numpy as np
+import uvicorn
 from fastapi import FastAPI, UploadFile, File
-
+from fastapi.responses import JSONResponse
 from inference import RoadDefectModel
-from utils import to_Image, sift_matching, to_dict
+from utils import to_Image, sift_matching, to_dict, load_yaml
 
 app = FastAPI()
 
-"""
-TODO: 05.09
-0. Общий задачник ?
-1. Выбор проекта и что хотим показать на конечном питче.
-2. Задачи на неделю и определение в какое время подводим результаты дня.
-3. Инициализация БД, дообучение модели,
-4. Сопряжение частей проекта в одно пространство || репу,
-5. Анализ взаимодействия с госорганами системы и посмотреть какой уровень госоргана связанная с дорожным покрытием 
-   (районный, областной, региональный, федеральный),
-6. Рыба презы
-7. Деплой системы куда ?
-8. Определение кол-во источников данных (модуль из машины, отправка заявки на сайте, отправка через бота ТГ - пример)
+DEVICE = "cpu"
+BASE_MODELS = "best.pt"
 
 
-CREATE TABLE Images (
-    id SERIAL PRIMARY KEY,
-    id_user INT,
-    name_images VARCHAR(255),
-    bbox_json JSONB,
-    gps_coordinates JSONB
-    time_escalation TIMESTAMP
-);
+@app.post("/update")
+async def update_weight(file: UploadFile):
+    """
 
+    :param file:
+    :return:
+    """
+    try:
+        # TODO: Добавить чтобы веса автоматом подгружались из MLflow любые с тегом production
+        global BASE_MODELS
+        file_path = f"./{file.filename}"
+        with open(file_path, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+            BASE_MODELS = file_path
 
-TODO: 06.09
-0. Итог предыдущего дня aka доделка долга
-1. Определение форматов взаимодействия между модулями системы (какие пары ключ-значения в json как пример, ip)
-2. Подготовка тестовых данных
-3. Эконом эффект || расчёт сервера
-4. Анализ похожих систем
+        return JSONResponse(content={"message": "Файл успешно загружен"}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"message": str(e)}, status_code=500)
 
-"""
 
 
 @app.post("/detection")
@@ -51,10 +45,10 @@ async def detection(file: UploadFile = File(...), detection_threshold: float = 0
     :param detection_threshold: confidence model
     :return: 
     """
-    # TODO: Добавить возвращение json с классами и боксами
+    global DEVICE, BASE_MODELS
     file = file.file.read()
     image = to_Image(file)
-    model = RoadDefectModel()
+    model = RoadDefectModel(BASE_MODELS)
     result = model.get_predict(image, detection_threshold)
     bbox = np.array(result.xyxy)
     dict_schema = to_dict(bbox)
@@ -63,7 +57,7 @@ async def detection(file: UploadFile = File(...), detection_threshold: float = 0
 
 
 @app.post("/compare")
-async def compare_img(file_first: UploadFile = File(...), file_second: UploadFile = File(...)):
+async def compare_img(file_first: UploadFile = File(...), file_second: UploadFile = File(...)) -> dict:
     """
     Compare images for antispam in-app
     :rtype: object
@@ -71,6 +65,32 @@ async def compare_img(file_first: UploadFile = File(...), file_second: UploadFil
     :param file_second: binary image for inference model
     :return:
     """
-    # TODO: Дописать функцию сравнения двух изображений
-    sift_matching(file_first, file_second)
-    return " "
+    result = sift_matching(file_first, file_second)
+    return {"result": result}
+
+
+@click.command()
+@click.option('--app_conf_path', 'app_conf_path')
+@click.option('--port', 'port', type=int)
+@click.option('--host', 'host', type=str, default='0.0.0.0', required=False)
+def start_app(app_conf_path: str = "config.yaml", port: int = 3000, host: str = '0.0.0.0') -> None:
+    """
+    Script to start inference service.
+
+    Parameters
+    ----------
+    app_conf_path: str
+        path to app config
+    port: int
+        port
+    host: str
+        host
+    """
+    global DEVICE, BASE_MODELS
+    DEVICE = load_yaml(app_conf_path)['device']
+    BASE_MODELS = load_yaml(app_conf_path)['base_models']
+    uvicorn.run(app, host=host, port=port)
+
+
+if __name__ == "__main__":
+    start_app()

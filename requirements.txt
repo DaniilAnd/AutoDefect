@@ -16,3 +16,4 @@ psycopg2-binary
 python-multipart~=0.0.5
 python-dotenv~=1.0.0
 kornia==0.6.8
+click
