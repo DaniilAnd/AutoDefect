@@ -1,2 +1,0 @@
-device: cpu
-base_models: best.pt
