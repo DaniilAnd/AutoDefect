@@ -57,17 +57,6 @@ def sift_matching(fname1, fname2) -> bool:
 
     F, inliers_mask = cv2.findFundamentalMat(src_pts, dst_pts, cv2.USAC_MAGSAC, 0.25, 0.999, 100000)
 
-    # Drawing matches using kornia_moons
-    # draw_LAF_matches(
-    #     lafs1,
-    #     lafs2,
-    #     idxs,
-    #     img1,
-    #     img2,
-    #     inliers_mask,
-    #     draw_dict={"inlier_color": (0.2, 1, 0.2), "tentative_color": None, "feature_color": None, "vertical": False},
-    # )
-    # print(f"{inliers_mask.sum()} inliers found")
     if inliers_mask.sum() > 2:
         return True
     else:

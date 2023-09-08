@@ -1,12 +1,7 @@
 FROM nvidia/cuda:11.6.2-devel-ubuntu20.04 as base
+# TODO: create docker compose or ci\cd gitlab
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=Europe/Moscow
-#    HTTP_PROXY="http://10.100.205.204:3128" \
-#    HTTPS_PROXY="http://10.100.205.204:3128" \
-#    http_proxy="http://10.100.205.204:3128" \
-#    https_proxy="http://10.100.205.204:3128" \
-#    no_proxy="localhost,localdomain,127.0.0.1,etc" \
-#    NO_PROXY="localhost,localdomain,127.0.0.1,etc"
 
 ARG PORT_ID=3000
 ARG HOST=0.0.0.0
@@ -28,8 +23,6 @@ RUN python3.9 -m pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torch
 COPY ./api_model ./api_model
 COPY ./requirements.txt .
 RUN python3.9 -m pip install -r requirements.txt
-
-#WORKDIR ./api_models
 
 EXPOSE ${PORT_ID}
 CMD cd api_models  && python app/app.py \

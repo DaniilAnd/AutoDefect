@@ -35,7 +35,6 @@ async def update_weight(file: UploadFile):
         return JSONResponse(content={"message": str(e)}, status_code=500)
 
 
-
 @app.post("/detection")
 async def detection(file: UploadFile = File(...), detection_threshold: float = 0.2) -> object:
     """
@@ -45,6 +44,7 @@ async def detection(file: UploadFile = File(...), detection_threshold: float = 0
     :param detection_threshold: confidence model
     :return: 
     """
+    # TODO: Add pydantic
     global DEVICE, BASE_MODELS
     file = file.file.read()
     image = to_Image(file)
