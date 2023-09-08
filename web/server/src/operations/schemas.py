@@ -8,3 +8,6 @@ class Report(BaseModel):
     bbox_json: dict
     time_escalation: datetime
     gps_coordinates: dict
+    city: str
+    street: str
+    state: str
