@@ -12,4 +12,7 @@ reports = Table(
     Column("bbox_json", JSONB, nullable=True),
     Column("time_escalation", TIMESTAMP, nullable=True),
     Column("gps_coordinates", JSONB, nullable=True),
+    Column("city", VARCHAR(255), nullable=True),
+    Column("street", VARCHAR(255), nullable=True),
+    Column("state", VARCHAR(255), nullable=True),
 )
