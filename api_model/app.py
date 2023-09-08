@@ -43,7 +43,14 @@ TODO: 06.09
 
 
 @app.post("/detection")
-async def detection(file: UploadFile = File(...), detection_threshold: float = 0.2):
+async def detection(file: UploadFile = File(...), detection_threshold: float = 0.2) -> object:
+    """
+    Detection road defect
+    :rtype: object json response
+    :param file: binary image for inference model
+    :param detection_threshold: confidence model
+    :return: 
+    """
     # TODO: Добавить возвращение json с классами и боксами
     file = file.file.read()
     image = to_Image(file)
@@ -57,6 +64,13 @@ async def detection(file: UploadFile = File(...), detection_threshold: float = 0
 
 @app.post("/compare")
 async def compare_img(file_first: UploadFile = File(...), file_second: UploadFile = File(...)):
+    """
+    Compare images for antispam in-app
+    :rtype: object
+    :param file_first: binary image for inference model
+    :param file_second: binary image for inference model
+    :return:
+    """
     # TODO: Дописать функцию сравнения двух изображений
     sift_matching(file_first, file_second)
     return " "

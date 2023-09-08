@@ -9,15 +9,31 @@ from kornia_moons.feature import *
 
 
 def to_Image(uploaded_file):
+    """
+
+    :param uploaded_file:
+    :return:
+    """
     image = Image.open(io.BytesIO(uploaded_file)).convert('RGB')
     return image
 
 
 def load_Image(path: str):
+    """
+
+    :param path:
+    :return:
+    """
     return Image.open(path).convert('RGB')
 
 
 def sift_matching(fname1, fname2):
+    """
+
+    :param fname1:
+    :param fname2:
+    :return:
+    """
     img1 = cv2.cvtColor(cv2.imread(fname1), cv2.COLOR_BGR2RGB)
     img2 = cv2.cvtColor(cv2.imread(fname2), cv2.COLOR_BGR2RGB)
 
@@ -55,6 +71,11 @@ def sift_matching(fname1, fname2):
 
 
 def to_dict(data):
+    """
+
+    :param data:
+    :return:
+    """
     if len(data) == 0:
         return {"empty": "0"}
     bbox = data[0]
