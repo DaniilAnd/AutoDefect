@@ -21,8 +21,8 @@ if __name__ == "__main__":
     for coor, img_name in zip(list_coor, path_imgs):
         path_img = os.path.join(path, img_name)
         img = load_Image(path_img)
-        model = RoadDefectModel()
-        result = model.get_predict(img, 0.1)
+        model = RoadDefectModel("best.pt")
+        result = model.get_predict(img, 0.1, "cpu")
         bbox = np.array(result.xyxy)
         dict_schema = to_dict(bbox)
         json_schema = json.dumps(dict_schema)
